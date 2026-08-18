@@ -7,11 +7,14 @@ import siteConfiguration from './.figma/make/site.json' with { type: 'json' }
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
+  // Detecta se está rodando no GitHub Pages
+  const isGitHubPages = process.env.GITHUB_ACTIONS === 'true'
+  const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || ''
+
   const emitSourcemaps = mode === 'development'
 
   return {
-    base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : '/',
+    base: isGitHubPages ? `/${repoName}/` : '/',
     build: {
       sourcemap: emitSourcemaps ? 'inline' : false,
       minify: !emitSourcemaps,
