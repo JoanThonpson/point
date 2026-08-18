@@ -1,26 +1,45 @@
-import { useState, useEffect, useCallback } from "react"
-import {
-  getState,
-  subscribe,
-  addTeam,
-  removeTeam,
-  editTeam,
-  addItem,
-  removeItem,
-  editItem,
-  toggleItem,
-  type Team,
-  type ChecklistItem,
-} from "./store"
+//import { useState, useEffect, useCallback } from "react"
+//import {
+//  getState,
+//  subscribe,
+//  addTeam,
+//  removeTeam,
+//  editTeam,
+//  addItem,
+//  removeItem,
+//  editItem,
+//  toggleItem,
+//  type Team,
+//  type ChecklistItem,
+//} from "./store"
+
+
+// src/App.tsx
+// src/App.tsx
+
+import { useCallback, useEffect, useState } from 'react'
+import { getState, subscribe, loadInitialState, removeTeam, editTeam, editItem, toggleItem, removeItem, addItem, addTeam } from './store'
+import { ChecklistItem, Team } from './services/supabase'
+
+function useAppState() {
+  const [state, setState] = useState(getState())
+  
+  useEffect(() => {
+    // Carrega dados iniciais
+    loadInitialState().then(() => {
+      setState({ ...getState() })
+    })
+  }, [])
+  
+  useEffect(() => {
+    return subscribe(() => setState({ ...getState() }))
+  }, [])
+  
+  return state
+}
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 const ADMIN_USER = { username: "admin", password: "admin123" }
-
-function useAppState() {
-  const [state, setState] = useState(getState)
-  useEffect(() => subscribe(() => setState({ ...getState() })), [])
-  return state
-}
 
 // ── Icons (inline SVG) ───────────────────────────────────────────────────────
 function IconCheck({ size = 16 }: { size?: number }) {
@@ -403,7 +422,9 @@ function Header({
             letterSpacing: "0.3px",
           }}
         >
-          <IconUser size={12} style={{ display: "inline", verticalAlign: "middle", marginRight: 5 }} />
+          <span style={{ display: "inline", verticalAlign: "middle", marginRight: 5 }}>
+            <IconUser size={12} />
+          </span>
           Logado como administrador — você pode criar equipes, gerenciar checklists e marcar atividades
         </div>
       )}
@@ -424,7 +445,7 @@ function HomePage({
   onSelectTeam: (id: string) => void
 }) {
   const getTeamStats = (teamId: string) => {
-    const teamItems = items.filter((i) => i.teamId === teamId)
+    const teamItems = items.filter((i) => i.team_id === teamId)
     return { total: teamItems.length, done: teamItems.filter((i) => i.checked).length }
   }
 
@@ -673,7 +694,7 @@ function TeamDetailPage({
   isAdmin: boolean
   onBack: () => void
 }) {
-  const teamItems = items.filter((i) => i.teamId === team.id)
+  const teamItems = items.filter((i) => i.team_id === team.id)
   const done = teamItems.filter((i) => i.checked).length
   const total = teamItems.length
 
@@ -931,9 +952,9 @@ function ChecklistRow({ item, isAdmin }: { item: ChecklistItem; isAdmin: boolean
         >
           {item.label}
         </p>
-        {item.checked && item.checkedAt && (
+        {item.checked && item.checked_at && (
           <p style={{ fontSize: 11, color: "#16a34a", marginTop: 2, fontWeight: 500 }}>
-            Concluído em {item.checkedAt}
+            Concluído em {item.checked_at}
           </p>
         )}
       </div>
@@ -972,14 +993,14 @@ function AdminPanel({
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
   const [editItemLabel, setEditItemLabel] = useState("")
 
-  const handleAddTeam = (e: React.FormEvent) => {
+  const handleAddTeam = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newTeamName.trim()) return
     const t = addTeam(newTeamName.trim(), newTeamDesc.trim(), newTeamLoc.trim() || "Sem localização")
     setNewTeamName("")
     setNewTeamDesc("")
     setNewTeamLoc("")
-    setSelectedTeamId(t.id)
+    setSelectedTeamId((await t).id)
     setActiveTab("items")
   }
 
@@ -991,7 +1012,7 @@ function AdminPanel({
   }
 
   const selectedTeam = teams.find((t) => t.id === selectedTeamId)
-  const teamItems = items.filter((i) => i.teamId === selectedTeamId)
+  const teamItems = items.filter((i) => i.team_id === selectedTeamId)
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
@@ -1187,7 +1208,7 @@ function AdminPanel({
             ) : (
               <div>
                 {teams.map((team) => {
-                  const tItems = items.filter((i) => i.teamId === team.id)
+                  const tItems = items.filter((i) => i.team_id === team.id)
                   const tDone = tItems.filter((i) => i.checked).length
                   const isEditing = editingTeamId === team.id
                   return (
@@ -1509,8 +1530,8 @@ function AdminPanel({
                                 <p style={{ fontSize: 14, color: item.checked ? "#94a3b8" : "#1e293b", fontWeight: item.checked ? 400 : 500, textDecoration: item.checked ? "line-through" : "none" }}>
                                   {item.label}
                                 </p>
-                                {item.checked && item.checkedAt && (
-                                  <p style={{ fontSize: 11, color: "#16a34a", marginTop: 2 }}>{item.checkedAt}</p>
+                                {item.checked && item.checked_at && (
+                                  <p style={{ fontSize: 11, color: "#16a34a", marginTop: 2 }}>{item.checked_at}</p>
                                 )}
                               </div>
                               <button

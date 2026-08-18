@@ -1,78 +1,54 @@
-export interface Team {
-  id: string
-  name: string
-  description: string
-  location: string
-  createdAt: string
-}
+// src/store.ts
+import { supabase, type Team, type ChecklistItem } from './services/supabase'
 
-export interface ChecklistItem {
-  id: string
-  teamId: string
-  label: string
-  checked: boolean
-  checkedAt?: string
-}
-
-export interface AppState {
+export type AppState = {
   teams: Team[]
   items: ChecklistItem[]
 }
 
-const DEFAULT_STATE: AppState = {
-  teams: [
-    {
-      id: "team-1",
-      name: "Equipe Alpha",
-      description: "Responsável pela área norte do complexo",
-      location: "Setor Norte",
-      createdAt: "2026-08-01",
-    },
-    {
-      id: "team-2",
-      name: "Equipe Beta",
-      description: "Cobertura da área sul e manutenção geral",
-      location: "Setor Sul",
-      createdAt: "2026-08-03",
-    },
-    {
-      id: "team-3",
-      name: "Equipe Gama",
-      description: "Inspeção de equipamentos e segurança leste",
-      location: "Setor Leste",
-      createdAt: "2026-08-05",
-    },
-  ],
-  items: [
-    { id: "i-1", teamId: "team-1", label: "Verificação de extintores — Bloco A", checked: true, checkedAt: "2026-08-17 08:32" },
-    { id: "i-2", teamId: "team-1", label: "Inspeção de saídas de emergência", checked: true, checkedAt: "2026-08-17 09:10" },
-    { id: "i-3", teamId: "team-1", label: "Teste de iluminação de emergência", checked: false },
-    { id: "i-4", teamId: "team-1", label: "Checagem de hidrantes — corredor principal", checked: false },
-    { id: "i-5", teamId: "team-1", label: "Relatório de vistoria assinado", checked: false },
-    { id: "i-6", teamId: "team-2", label: "Verificação de extintores — Bloco B", checked: true, checkedAt: "2026-08-17 07:55" },
-    { id: "i-7", teamId: "team-2", label: "Limpeza de drenagem pluvial", checked: true, checkedAt: "2026-08-17 10:20" },
-    { id: "i-8", teamId: "team-2", label: "Inspeção de quadro elétrico", checked: true, checkedAt: "2026-08-17 11:05" },
-    { id: "i-9", teamId: "team-2", label: "Sinalização de piso verificada", checked: false },
-    { id: "i-10", teamId: "team-3", label: "Calibração de equipamentos de medição", checked: false },
-    { id: "i-11", teamId: "team-3", label: "Revisão de EPIs disponíveis", checked: true, checkedAt: "2026-08-17 08:00" },
-    { id: "i-12", teamId: "team-3", label: "Teste de alarme de incêndio", checked: false },
-  ],
-}
-
-function load(): AppState {
-  try {
-    const raw = localStorage.getItem("ops_state")
-    if (raw) return JSON.parse(raw) as AppState
-  } catch {}
-  return DEFAULT_STATE
-}
-
-function save(state: AppState) {
-  localStorage.setItem("ops_state", JSON.stringify(state))
-}
-
-let _state: AppState = load()
 const _listeners: Array<() => void> = []
+
+// Carrega dados iniciais do Supabase
+let _state: AppState = { teams: [], items: [] }
+let isLoading = true
+
+export async function loadInitialState(): Promise<AppState> {
+  if (isLoading) {
+    await loadState()
+  }
+  return _state
+}
+
+async function loadState() {
+  try {
+    // Busca equipes
+    const { data: teams, error: teamsError } = await supabase
+      .from('teams')
+      .select('*')
+      .order('name')
+
+    if (teamsError) throw teamsError
+
+    // Busca itens
+    const { data: items, error: itemsError } = await supabase
+      .from('checklist_items')
+      .select('*')
+      .order('label')
+
+    if (itemsError) throw itemsError
+
+    _state = {
+      teams: teams || [],
+      items: items || []
+    }
+    isLoading = false
+    return _state
+  } catch (error) {
+    console.error('Error loading data from Supabase:', error)
+    isLoading = false
+    return _state
+  }
+}
 
 export function getState(): AppState {
   return _state
@@ -87,78 +63,153 @@ export function subscribe(fn: () => void) {
 }
 
 function notify() {
-  save(_state)
   _listeners.forEach((fn) => fn())
 }
 
-export function addTeam(name: string, description: string, location: string) {
-  const team: Team = {
-    id: `team-${Date.now()}`,
+// ── CRUD Operations ──────────────────────────────────────────────
+
+export async function addTeam(name: string, description: string, location: string): Promise<Team> {
+  const id = `team-${Date.now()}`
+  const newTeam: Team = {
+    id,
     name,
     description,
     location,
-    createdAt: new Date().toISOString().slice(0, 10),
+    created_at: new Date().toISOString()
   }
-  _state = { ..._state, teams: [..._state.teams, team] }
-  notify()
-  return team
-}
 
-export function removeTeam(id: string) {
+  const { error } = await supabase
+    .from('teams')
+    .insert([newTeam])
+
+  if (error) throw error
+
   _state = {
     ..._state,
-    teams: _state.teams.filter((t) => t.id !== id),
-    items: _state.items.filter((i) => i.teamId !== id),
+    teams: [..._state.teams, newTeam]
+  }
+  notify()
+  return newTeam
+}
+
+export async function removeTeam(id: string): Promise<void> {
+  // Remove itens relacionados primeiro (cascade)
+  const { error: itemsError } = await supabase
+    .from('checklist_items')
+    .delete()
+    .eq('team_id', id)
+
+  if (itemsError) throw itemsError
+
+  // Remove a equipe
+  const { error: teamError } = await supabase
+    .from('teams')
+    .delete()
+    .eq('id', id)
+
+  if (teamError) throw teamError
+
+  _state = {
+    ..._state,
+    teams: _state.teams.filter(t => t.id !== id),
+    items: _state.items.filter(i => i.team_id !== id)
   }
   notify()
 }
 
-export function addItem(teamId: string, label: string) {
-  const item: ChecklistItem = {
-    id: `i-${Date.now()}`,
-    teamId,
+export async function editTeam(id: string, name: string, description: string, location: string): Promise<void> {
+  const { error } = await supabase
+    .from('teams')
+    .update({ name, description, location })
+    .eq('id', id)
+
+  if (error) throw error
+
+  _state = {
+    ..._state,
+    teams: _state.teams.map(t => t.id === id ? { ...t, name, description, location } : t)
+  }
+  notify()
+}
+
+export async function addItem(teamId: string, label: string): Promise<ChecklistItem> {
+  const id = `i-${Date.now()}`
+  const newItem: ChecklistItem = {
+    id,
+    team_id: teamId,
     label,
     checked: false,
+    checked_at: null
   }
-  _state = { ..._state, items: [..._state.items, item] }
-  notify()
-}
 
-export function removeItem(id: string) {
-  _state = { ..._state, items: _state.items.filter((i) => i.id !== id) }
-  notify()
-}
+  const { error } = await supabase
+    .from('checklist_items')
+    .insert([newItem])
 
-export function editTeam(id: string, name: string, description: string, location: string) {
+  if (error) throw error
+
   _state = {
     ..._state,
-    teams: _state.teams.map((t) => (t.id === id ? { ...t, name, description, location } : t)),
+    items: [..._state.items, newItem]
+  }
+  notify()
+  return newItem
+}
+
+export async function removeItem(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('checklist_items')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw error
+
+  _state = {
+    ..._state,
+    items: _state.items.filter(i => i.id !== id)
   }
   notify()
 }
 
-export function editItem(id: string, label: string) {
+export async function editItem(id: string, label: string): Promise<void> {
+  const { error } = await supabase
+    .from('checklist_items')
+    .update({ label })
+    .eq('id', id)
+
+  if (error) throw error
+
   _state = {
     ..._state,
-    items: _state.items.map((i) => (i.id === id ? { ...i, label } : i)),
+    items: _state.items.map(i => i.id === id ? { ...i, label } : i)
   }
   notify()
 }
 
-export function toggleItem(id: string) {
+export async function toggleItem(id: string): Promise<void> {
+  const item = _state.items.find(i => i.id === id)
+  if (!item) return
+
+  const newChecked = !item.checked
+  const newCheckedAt = newChecked ? new Date().toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : null
+
+  const { error } = await supabase
+    .from('checklist_items')
+    .update({ 
+      checked: newChecked,
+      checked_at: newCheckedAt
+    })
+    .eq('id', id)
+
+  if (error) throw error
+
   _state = {
     ..._state,
-    items: _state.items.map((i) =>
-      i.id === id
-        ? {
-            ...i,
-            checked: !i.checked,
-            checkedAt: !i.checked
-              ? new Date().toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
-              : undefined,
-          }
+    items: _state.items.map(i => 
+      i.id === id 
+        ? { ...i, checked: newChecked, checked_at: newCheckedAt }
         : i
-    ),
+    )
   }
   notify()
 }
