@@ -1,0 +1,10 @@
+{
+  "description": "Enables teams to view and manage activity checklists with role-based access allowing admins to create and users to track progress seamlessly.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
