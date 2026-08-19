@@ -1642,7 +1642,7 @@ export default function App() {
           background: "#fff",
         }}
       >
-        Activity map © 2026 — Sistema de Acompanhamento Operacional
+        Activity map © 2026 — Sistema de Acompanhamento de Atividades
       </footer>
     </div>
   )
