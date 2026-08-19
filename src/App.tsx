@@ -229,7 +229,7 @@ function Header({
             <IconMap size={18} />
           </div>
           <span style={{ fontFamily: "Outfit, sans-serif", fontWeight: 700, fontSize: 18, letterSpacing: "-0.3px" }}>
-            OpsCheck
+            Activity map
           </span>
         </button>
 
@@ -400,7 +400,7 @@ function Header({
                       Entrar
                     </button>
                     <p style={{ fontSize: 11, color: "#94a3b8", textAlign: "center", marginTop: 2 }}>
-                      demo: admin / admin123
+                      
                     </p>
                   </form>
                 </div>
@@ -484,7 +484,7 @@ function HomePage({
         >
           Painel de Acompanhamento
           <br />
-          <span style={{ color: "#1e3a5f" }}>das Equipes Operacionais</span>
+          <span style={{ color: "#1e3a5f" }}>das Equipes</span>
         </h1>
         <p style={{ fontSize: 16, color: "#475569", maxWidth: 560, lineHeight: 1.6 }}>
           Acompanhe em tempo real o progresso de cada equipe. Clique em uma equipe para visualizar o mapa da área e o
@@ -1642,7 +1642,7 @@ export default function App() {
           background: "#fff",
         }}
       >
-        OpsCheck © 2026 — Sistema de Acompanhamento Operacional
+        Activity map © 2026 — Sistema de Acompanhamento Operacional
       </footer>
     </div>
   )
