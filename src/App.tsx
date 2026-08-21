@@ -30,7 +30,7 @@ import {
   addTeam,
 } from "./store";
 import { ChecklistItem, Team } from "./services/supabase";
-import mapaLocal from "./imports/MapaExpedicaoSementeira.png";
+//import mapaLocal from "./imports/MapaExpedicaoSementeira.png";
 
 function useAppState() {
   const [state, setState] = useState(getState());
@@ -1028,6 +1028,7 @@ function TeamDetailPage({
               scrollSnapAlign: "start",
             }}
           >
+            {/* Map 
             <img
               src={mapaLocal}
               alt={`Mapa da área — ${team.name}`}
@@ -1037,14 +1038,34 @@ function TeamDetailPage({
                 aspectRatio: "4/3",
                 objectFit: "cover",
               }}
-            />
+            />*/}
 
-            {/* Map 
-          <img
-            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&h=600&fit=crop&auto=format"
-            alt={`Mapa da área — ${team.name}`}
-            style={{ width: "100%", display: "block", aspectRatio: "4/3", objectFit: "cover" }}
-          />*/}
+            {/* DEPOIS - novo código com o iframe do Canva */}
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                paddingTop: "67.0898%",
+                overflow: "hidden",
+                borderRadius: "8px",
+              }}
+            >
+              <iframe
+                loading="lazy"
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  border: "none",
+                }}
+                src="https://www.canva.com/design/DAHS4Jiwh1w/-CUSir4d3w-ZOJkt8aRs5g/view?embed"
+                allowFullScreen
+                allow="fullscreen"
+                title={`Mapa Canva - ${team.name}`}
+              />
+            </div>
             <div
               style={{
                 padding: "16px 20px",
