@@ -13,122 +13,210 @@
 //  type ChecklistItem,
 //} from "./store"
 
-
 // src/App.tsx
 // src/App.tsx
 
-import { useCallback, useEffect, useState } from 'react'
-import { getState, subscribe, loadInitialState, removeTeam, editTeam, editItem, toggleItem, removeItem, addItem, addTeam } from './store'
-import { ChecklistItem, Team } from './services/supabase'
+import { useCallback, useEffect, useState } from "react";
+import {
+  getState,
+  subscribe,
+  loadInitialState,
+  removeTeam,
+  editTeam,
+  editItem,
+  toggleItem,
+  removeItem,
+  addItem,
+  addTeam,
+} from "./store";
+import { ChecklistItem, Team } from "./services/supabase";
+import mapaLocal from "./imports/MapaExpedicaoSementeira.png";
 
 function useAppState() {
-  const [state, setState] = useState(getState())
-  
+  const [state, setState] = useState(getState());
+
   useEffect(() => {
     // Carrega dados iniciais
     loadInitialState().then(() => {
-      setState({ ...getState() })
-    })
-  }, [])
-  
+      setState({ ...getState() });
+    });
+  }, []);
+
   useEffect(() => {
-    return subscribe(() => setState({ ...getState() }))
-  }, [])
-  
-  return state
+    return subscribe(() => setState({ ...getState() }));
+  }, []);
+
+  return state;
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
-const ADMIN_USER = { username: "admin", password: "admin123" }
+const ADMIN_USER = { username: "admin", password: "admin1230" };
 
 // ── Icons (inline SVG) ───────────────────────────────────────────────────────
 function IconCheck({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M3 8l3.5 3.5L13 5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 function IconX({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M4 4l8 8M12 4l-8 8"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
-  )
+  );
 }
 function IconChevronRight({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M6 4l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 function IconPlus({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M8 3v10M3 8h10"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
-  )
+  );
 }
 function IconTrash({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <path d="M3 4h10M6 4V3h4v1M5 4l1 9h4l1-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M3 4h10M6 4V3h4v1M5 4l1 9h4l1-9"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 function IconMap({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" fill="none">
-      <path d="M1 4.5v12l6-3 6 3 6-3v-12l-6 3-6-3-6 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path
+        d="M1 4.5v12l6-3 6 3 6-3v-12l-6 3-6-3-6 3z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
       <path d="M7 1.5v12M13 4.5v12" stroke="currentColor" strokeWidth="1.5" />
     </svg>
-  )
+  );
 }
 function IconLock({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
-      <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <rect
+        x="3"
+        y="7"
+        width="10"
+        height="7"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M5 7V5a3 3 0 016 0v2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
-  )
+  );
 }
 function IconUser({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
       <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path
+        d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
-  )
+  );
 }
 function IconArrowLeft({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 18 18" fill="none">
-      <path d="M11 4L6 9l5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M11 4L6 9l5 5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 function IconPencil({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 14 14" fill="none">
-      <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 function IconSave({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 14 14" fill="none">
-      <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M2 7l3.5 3.5L12 3"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 
 // ── Progress bar ─────────────────────────────────────────────────────────────
 function ProgressBar({ done, total }: { done: number; total: number }) {
-  const pct = total === 0 ? 0 : Math.round((done / total) * 100)
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   return (
     <div className="flex items-center gap-2">
-      <div style={{ flex: 1, height: 6, background: "#e2e8f0", borderRadius: 3, overflow: "hidden" }}>
+      <div
+        style={{
+          flex: 1,
+          height: 6,
+          background: "#e2e8f0",
+          borderRadius: 3,
+          overflow: "hidden",
+        }}
+      >
         <div
           style={{
             height: "100%",
@@ -139,11 +227,18 @@ function ProgressBar({ done, total }: { done: number; total: number }) {
           }}
         />
       </div>
-      <span style={{ fontSize: 12, color: "#64748b", minWidth: 40, textAlign: "right" }}>
+      <span
+        style={{
+          fontSize: 12,
+          color: "#64748b",
+          minWidth: 40,
+          textAlign: "right",
+        }}
+      >
         {done}/{total}
       </span>
     </div>
-  )
+  );
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
@@ -154,29 +249,48 @@ function Header({
   onGoAdmin,
   onGoHome,
 }: {
-  isAdmin: boolean
-  onLogin: (u: string, p: string) => boolean
-  onLogout: () => void
-  onGoAdmin: () => void
-  onGoHome: () => void
+  isAdmin: boolean;
+  onLogin: (u: string, p: string) => boolean;
+  onLogout: () => void;
+  onGoAdmin: () => void;
+  onGoHome: () => void;
 }) {
-  const [showForm, setShowForm] = useState(false)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [showForm, setShowForm] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+  const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  // Mostra notificação quando vira admin e esconde após 5 segundos
+  useEffect(() => {
+    if (isAdmin) {
+      setShowNotification(true);
+      if (timer) clearTimeout(timer);
+      const newTimer = setTimeout(() => setShowNotification(false), 5000);
+      setTimer(newTimer);
+    } else {
+      setShowNotification(false);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isAdmin]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const ok = onLogin(username, password)
+    e.preventDefault();
+    const ok = onLogin(username, password);
     if (ok) {
-      setShowForm(false)
-      setUsername("")
-      setPassword("")
-      setError("")
+      setShowForm(false);
+      setUsername("");
+      setPassword("");
+      setError("");
     } else {
-      setError("Usuário ou senha incorretos.")
+      setError("Usuário ou senha incorretos.");
     }
-  }
+  };
 
   return (
     <header
@@ -189,6 +303,36 @@ function Header({
         boxShadow: "0 1px 0 rgba(255,255,255,0.06)",
       }}
     >
+      {/* NOTIFICAÇÃO QUE SOME APÓS 5 SEGUNDOS */}
+      {isAdmin && showNotification && (
+        <div
+          style={{
+            background: "#16a34a",
+            textAlign: "center",
+            padding: "5px 0",
+            fontSize: 12,
+            fontWeight: 500,
+            color: "#fff",
+            letterSpacing: "0.3px",
+            animation: "slideDown 0.3s ease-out",
+            width: "100%",
+          }}
+        >
+          <span
+            style={{
+              display: "inline",
+              verticalAlign: "middle",
+              marginRight: 5,
+            }}
+          >
+            <IconUser size={12} />
+          </span>
+          Logado como administrador — você pode criar equipes, gerenciar
+          checklists e marcar atividades
+        </div>
+      )}
+
+      {/* Barra de navegação principal */}
       <div
         style={{
           maxWidth: 1200,
@@ -228,7 +372,14 @@ function Header({
           >
             <IconMap size={18} />
           </div>
-          <span style={{ fontFamily: "Outfit, sans-serif", fontWeight: 700, fontSize: 18, letterSpacing: "-0.3px" }}>
+          <span
+            style={{
+              fontFamily: "Outfit, sans-serif",
+              fontWeight: 700,
+              fontSize: 18,
+              letterSpacing: "-0.3px",
+            }}
+          >
             Activity map
           </span>
         </button>
@@ -252,8 +403,12 @@ function Header({
                 gap: 6,
                 transition: "background 0.15s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "rgba(255,255,255,0.12)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "rgba(255,255,255,0.06)")
+              }
             >
               Painel Admin
             </button>
@@ -299,8 +454,12 @@ function Header({
                   gap: 7,
                   transition: "background 0.15s",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#2a4f80")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "#1e3a5f")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#2a4f80")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "#1e3a5f")
+                }
               >
                 <IconLock size={14} />
                 Entrar
@@ -331,9 +490,24 @@ function Header({
                   >
                     Acesso Administrativo
                   </p>
-                  <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <form
+                    onSubmit={handleSubmit}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                    }}
+                  >
                     <div>
-                      <label style={{ fontSize: 12, color: "#64748b", fontWeight: 500, display: "block", marginBottom: 4 }}>
+                      <label
+                        style={{
+                          fontSize: 12,
+                          color: "#64748b",
+                          fontWeight: 500,
+                          display: "block",
+                          marginBottom: 4,
+                        }}
+                      >
                         Usuário
                       </label>
                       <input
@@ -350,12 +524,24 @@ function Header({
                           color: "#0f172a",
                           transition: "border 0.15s",
                         }}
-                        onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                        onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                        onFocus={(e) =>
+                          (e.currentTarget.style.border = "1.5px solid #1e3a5f")
+                        }
+                        onBlur={(e) =>
+                          (e.currentTarget.style.border = "1.5px solid #e2e8f0")
+                        }
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: 12, color: "#64748b", fontWeight: 500, display: "block", marginBottom: 4 }}>
+                      <label
+                        style={{
+                          fontSize: 12,
+                          color: "#64748b",
+                          fontWeight: 500,
+                          display: "block",
+                          marginBottom: 4,
+                        }}
+                      >
                         Senha
                       </label>
                       <input
@@ -373,12 +559,18 @@ function Header({
                           color: "#0f172a",
                           transition: "border 0.15s",
                         }}
-                        onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                        onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                        onFocus={(e) =>
+                          (e.currentTarget.style.border = "1.5px solid #1e3a5f")
+                        }
+                        onBlur={(e) =>
+                          (e.currentTarget.style.border = "1.5px solid #e2e8f0")
+                        }
                       />
                     </div>
                     {error && (
-                      <p style={{ fontSize: 12, color: "#dc2626", margin: 0 }}>{error}</p>
+                      <p style={{ fontSize: 12, color: "#dc2626", margin: 0 }}>
+                        {error}
+                      </p>
                     )}
                     <button
                       type="submit"
@@ -394,14 +586,23 @@ function Header({
                         cursor: "pointer",
                         transition: "background 0.15s",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#2a4f80")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "#1e3a5f")}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = "#2a4f80")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "#1e3a5f")
+                      }
                     >
                       Entrar
                     </button>
-                    <p style={{ fontSize: 11, color: "#94a3b8", textAlign: "center", marginTop: 2 }}>
-                      
-                    </p>
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: "#94a3b8",
+                        textAlign: "center",
+                        marginTop: 2,
+                      }}
+                    ></p>
                   </form>
                 </div>
               )}
@@ -409,27 +610,8 @@ function Header({
           )}
         </div>
       </div>
-
-      {isAdmin && (
-        <div
-          style={{
-            background: "#16a34a",
-            textAlign: "center",
-            padding: "5px 0",
-            fontSize: 12,
-            fontWeight: 500,
-            color: "#fff",
-            letterSpacing: "0.3px",
-          }}
-        >
-          <span style={{ display: "inline", verticalAlign: "middle", marginRight: 5 }}>
-            <IconUser size={12} />
-          </span>
-          Logado como administrador — você pode criar equipes, gerenciar checklists e marcar atividades
-        </div>
-      )}
     </header>
-  )
+  );
 }
 
 // ── Home Page ─────────────────────────────────────────────────────────────────
@@ -439,18 +621,23 @@ function HomePage({
   isAdmin,
   onSelectTeam,
 }: {
-  teams: Team[]
-  items: ChecklistItem[]
-  isAdmin: boolean
-  onSelectTeam: (id: string) => void
+  teams: Team[];
+  items: ChecklistItem[];
+  isAdmin: boolean;
+  onSelectTeam: (id: string) => void;
 }) {
   const getTeamStats = (teamId: string) => {
-    const teamItems = items.filter((i) => i.team_id === teamId)
-    return { total: teamItems.length, done: teamItems.filter((i) => i.checked).length }
-  }
+    const teamItems = items.filter((i) => i.team_id === teamId);
+    return {
+      total: teamItems.length,
+      done: teamItems.filter((i) => i.checked).length,
+    };
+  };
 
   return (
-    <main style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 80px" }}>
+    <main
+      style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 24px 80px" }}
+    >
       {/* Hero */}
       <div style={{ marginBottom: 48 }}>
         <div
@@ -486,9 +673,16 @@ function HomePage({
           <br />
           <span style={{ color: "#1e3a5f" }}>das Equipes</span>
         </h1>
-        <p style={{ fontSize: 16, color: "#475569", maxWidth: 560, lineHeight: 1.6 }}>
-          Acompanhe em tempo real o progresso de cada equipe. Clique em uma equipe para visualizar o mapa da área e o
-          checklist de atividades.
+        <p
+          style={{
+            fontSize: 16,
+            color: "#475569",
+            maxWidth: 560,
+            lineHeight: 1.6,
+          }}
+        >
+          Acompanhe em tempo real o progresso de cada equipe. Clique em uma
+          equipe para visualizar o mapa da área e o checklist de atividades.
         </p>
       </div>
 
@@ -522,7 +716,16 @@ function HomePage({
                 border: "1px solid #e2e8f0",
               }}
             >
-              <p style={{ fontSize: 13, color: "#64748b", fontWeight: 500, marginBottom: 4 }}>{s.label}</p>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: "#64748b",
+                  fontWeight: 500,
+                  marginBottom: 4,
+                }}
+              >
+                {s.label}
+              </p>
               <p
                 style={{
                   fontFamily: "Outfit, sans-serif",
@@ -564,9 +767,9 @@ function HomePage({
           }}
         >
           {teams.map((team) => {
-            const { total, done } = getTeamStats(team.id)
-            const pct = total === 0 ? 0 : Math.round((done / total) * 100)
-            const isComplete = total > 0 && done === total
+            const { total, done } = getTeamStats(team.id);
+            const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+            const isComplete = total > 0 && done === total;
 
             return (
               <button
@@ -585,19 +788,33 @@ function HomePage({
                   gap: 16,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.08)"
-                  e.currentTarget.style.borderColor = "#1e3a5f"
-                  e.currentTarget.style.transform = "translateY(-2px)"
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 24px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.borderColor = "#1e3a5f";
+                  e.currentTarget.style.transform = "translateY(-2px)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "none"
-                  e.currentTarget.style.borderColor = "#e2e8f0"
-                  e.currentTarget.style.transform = "translateY(0)"
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = "#e2e8f0";
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        marginBottom: 4,
+                      }}
+                    >
                       <h2
                         style={{
                           fontFamily: "Outfit, sans-serif",
@@ -624,7 +841,9 @@ function HomePage({
                         </span>
                       )}
                     </div>
-                    <p style={{ fontSize: 13, color: "#64748b" }}>{team.location}</p>
+                    <p style={{ fontSize: 13, color: "#64748b" }}>
+                      {team.location}
+                    </p>
                   </div>
                   <div
                     style={{
@@ -642,11 +861,27 @@ function HomePage({
                   </div>
                 </div>
 
-                <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.5 }}>{team.description}</p>
+                <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.5 }}>
+                  {team.description}
+                </p>
 
                 <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontSize: 12, color: "#64748b", fontWeight: 500 }}>Progresso das atividades</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: 6,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 12,
+                        color: "#64748b",
+                        fontWeight: 500,
+                      }}
+                    >
+                      Progresso das atividades
+                    </span>
                     <span
                       style={{
                         fontSize: 12,
@@ -674,12 +909,12 @@ function HomePage({
                   <IconChevronRight size={15} />
                 </div>
               </button>
-            )
+            );
           })}
         </div>
       )}
     </main>
-  )
+  );
 }
 
 // ── Team Detail Page ──────────────────────────────────────────────────────────
@@ -689,17 +924,19 @@ function TeamDetailPage({
   isAdmin,
   onBack,
 }: {
-  team: Team
-  items: ChecklistItem[]
-  isAdmin: boolean
-  onBack: () => void
+  team: Team;
+  items: ChecklistItem[];
+  isAdmin: boolean;
+  onBack: () => void;
 }) {
-  const teamItems = items.filter((i) => i.team_id === team.id)
-  const done = teamItems.filter((i) => i.checked).length
-  const total = teamItems.length
+  const teamItems = items.filter((i) => i.team_id === team.id);
+  const done = teamItems.filter((i) => i.checked).length;
+  const total = teamItems.length;
 
   return (
-    <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px 80px" }}>
+    <main
+      style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px 80px" }}
+    >
       {/* Breadcrumb */}
       <button
         onClick={onBack}
@@ -744,167 +981,230 @@ function TeamDetailPage({
       </div>
 
       {/* Mobile swipe hint */}
-      <p style={{ fontSize: 12, color: "#94a3b8", marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}>
-        <span style={{ fontSize: 14 }}>↔</span> Deslize para ver mapa e checklist
+      <p
+        style={{
+          fontSize: 12,
+          color: "#94a3b8",
+          marginBottom: 10,
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+        }}
+      >
+        <span style={{ fontSize: 14 }}>↔</span> Deslize para ver mapa e
+        checklist
       </p>
 
       {/* Two column layout: map + checklist — horizontally scrollable on mobile */}
-      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", marginLeft: -24, marginRight: -24, paddingLeft: 24, paddingRight: 24 }}>
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(300px, 1fr) minmax(320px, 400px)",
-          gap: 24,
-          alignItems: "start",
-          minWidth: 660,
-          scrollSnapType: "x mandatory",
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+          marginLeft: -24,
+          marginRight: -24,
+          paddingLeft: 24,
+          paddingRight: 24,
         }}
       >
-        {/* Map */}
         <div
           style={{
-            borderRadius: 16,
-            overflow: "hidden",
-            border: "1px solid #e2e8f0",
-            background: "#e2e8f0",
-            position: "sticky",
-            top: 88,
-            scrollSnapAlign: "start",
+            display: "grid",
+            gridTemplateColumns: "minmax(300px, 1fr) minmax(320px, 400px)",
+            gap: 24,
+            alignItems: "start",
+            minWidth: 660,
+            scrollSnapType: "x mandatory",
           }}
         >
+          {/* Map */}
+          <div
+            style={{
+              borderRadius: 16,
+              overflow: "hidden",
+              border: "1px solid #e2e8f0",
+              background: "#e2e8f0",
+              position: "sticky",
+              top: 88,
+              scrollSnapAlign: "start",
+            }}
+          >
+            <img
+              src={mapaLocal}
+              alt={`Mapa da área — ${team.name}`}
+              style={{
+                width: "100%",
+                display: "block",
+                aspectRatio: "4/3",
+                objectFit: "cover",
+              }}
+            />
+
+            {/* Map 
           <img
             src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&h=600&fit=crop&auto=format"
             alt={`Mapa da área — ${team.name}`}
             style={{ width: "100%", display: "block", aspectRatio: "4/3", objectFit: "cover" }}
-          />
-          <div
-            style={{
-              padding: "16px 20px",
-              background: "#fff",
-              borderTop: "1px solid #e2e8f0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <p style={{ fontFamily: "Outfit, sans-serif", fontWeight: 700, fontSize: 14, color: "#0f172a" }}>
-                Mapa da Área
-              </p>
-              <p style={{ fontSize: 12, color: "#64748b" }}>{team.location}</p>
-            </div>
+          />*/}
             <div
               style={{
-                padding: "4px 12px",
-                borderRadius: 20,
-                background: done === total && total > 0 ? "#dcfce7" : "#f1f5f9",
-                color: done === total && total > 0 ? "#16a34a" : "#64748b",
-                fontSize: 12,
-                fontWeight: 700,
+                padding: "16px 20px",
+                background: "#fff",
+                borderTop: "1px solid #e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              {done}/{total} concluídos
-            </div>
-          </div>
-        </div>
-
-        {/* Checklist panel */}
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: 16,
-            border: "1px solid #e2e8f0",
-            overflow: "hidden",
-            scrollSnapAlign: "start",
-          }}
-        >
-          {/* Panel header */}
-          <div
-            style={{
-              padding: "20px 24px 16px",
-              borderBottom: "1px solid #f1f5f9",
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: "Outfit, sans-serif",
-                fontSize: 18,
-                fontWeight: 700,
-                color: "#0f172a",
-                marginBottom: 12,
-              }}
-            >
-              Checklist de Atividades
-            </h2>
-            <ProgressBar done={done} total={total} />
-          </div>
-
-          {/* Items */}
-          <div style={{ padding: "8px 0" }}>
-            {teamItems.length === 0 ? (
-              <p style={{ padding: "32px 24px", color: "#94a3b8", fontSize: 14, textAlign: "center" }}>
-                Nenhuma atividade cadastrada para esta equipe.
-              </p>
-            ) : (
-              teamItems.map((item) => (
-                <ChecklistRow key={item.id} item={item} isAdmin={isAdmin} />
-              ))
-            )}
-          </div>
-
-          {/* Legend */}
-          <div
-            style={{
-              padding: "16px 24px",
-              borderTop: "1px solid #f1f5f9",
-              display: "flex",
-              gap: 20,
-              flexWrap: "wrap",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "Outfit, sans-serif",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    color: "#0f172a",
+                  }}
+                >
+                  Mapa da Área
+                </p>
+                <p style={{ fontSize: 12, color: "#64748b" }}>
+                  {team.location}
+                </p>
+              </div>
               <div
                 style={{
-                  width: 14,
-                  height: 14,
-                  borderRadius: 4,
-                  background: "#16a34a",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  padding: "4px 12px",
+                  borderRadius: 20,
+                  background:
+                    done === total && total > 0 ? "#dcfce7" : "#f1f5f9",
+                  color: done === total && total > 0 ? "#16a34a" : "#64748b",
+                  fontSize: 12,
+                  fontWeight: 700,
                 }}
               >
-                <IconCheck size={10} />
+                {done}/{total} concluídos
               </div>
-              <span style={{ fontSize: 12, color: "#64748b" }}>Concluído</span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div
+          </div>
+
+          {/* Checklist panel */}
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 16,
+              border: "1px solid #e2e8f0",
+              overflow: "hidden",
+              scrollSnapAlign: "start",
+            }}
+          >
+            {/* Panel header */}
+            <div
+              style={{
+                padding: "20px 24px 16px",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <h2
                 style={{
-                  width: 14,
-                  height: 14,
-                  borderRadius: 4,
-                  border: "2px solid #cbd5e1",
-                  background: "#fff",
+                  fontFamily: "Outfit, sans-serif",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                  marginBottom: 12,
                 }}
-              />
-              <span style={{ fontSize: 12, color: "#64748b" }}>Pendente</span>
+              >
+                Checklist de Atividades
+              </h2>
+              <ProgressBar done={done} total={total} />
             </div>
-            {isAdmin && (
-              <span style={{ fontSize: 12, color: "#1e3a5f", fontWeight: 600, marginLeft: "auto" }}>
-                Clique para marcar
-              </span>
-            )}
+
+            {/* Items */}
+            <div style={{ padding: "8px 0" }}>
+              {teamItems.length === 0 ? (
+                <p
+                  style={{
+                    padding: "32px 24px",
+                    color: "#94a3b8",
+                    fontSize: 14,
+                    textAlign: "center",
+                  }}
+                >
+                  Nenhuma atividade cadastrada para esta equipe.
+                </p>
+              ) : (
+                teamItems.map((item) => (
+                  <ChecklistRow key={item.id} item={item} isAdmin={isAdmin} />
+                ))
+              )}
+            </div>
+
+            {/* Legend */}
+            <div
+              style={{
+                padding: "16px 24px",
+                borderTop: "1px solid #f1f5f9",
+                display: "flex",
+                gap: 20,
+                flexWrap: "wrap",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: 4,
+                    background: "#16a34a",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <IconCheck size={10} />
+                </div>
+                <span style={{ fontSize: 12, color: "#64748b" }}>
+                  Concluído
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: 4,
+                    border: "2px solid #cbd5e1",
+                    background: "#fff",
+                  }}
+                />
+                <span style={{ fontSize: 12, color: "#64748b" }}>Pendente</span>
+              </div>
+              {isAdmin && (
+                <span
+                  style={{
+                    fontSize: 12,
+                    color: "#1e3a5f",
+                    fontWeight: 600,
+                    marginLeft: "auto",
+                  }}
+                >
+                  Clique para marcar
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
-      </div>
     </main>
-  )
+  );
 }
 
-function ChecklistRow({ item, isAdmin }: { item: ChecklistItem; isAdmin: boolean }) {
-  const [hover, setHover] = useState(false)
+function ChecklistRow({
+  item,
+  isAdmin,
+}: {
+  item: ChecklistItem;
+  isAdmin: boolean;
+}) {
+  const [hover, setHover] = useState(false);
 
   return (
     <div
@@ -953,13 +1253,20 @@ function ChecklistRow({ item, isAdmin }: { item: ChecklistItem; isAdmin: boolean
           {item.label}
         </p>
         {item.checked && item.checked_at && (
-          <p style={{ fontSize: 11, color: "#16a34a", marginTop: 2, fontWeight: 500 }}>
+          <p
+            style={{
+              fontSize: 11,
+              color: "#16a34a",
+              marginTop: 2,
+              fontWeight: 500,
+            }}
+          >
             Concluído em {item.checked_at}
           </p>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 // ── Admin Panel ───────────────────────────────────────────────────────────────
@@ -968,51 +1275,57 @@ function AdminPanel({
   items,
   onBack,
 }: {
-  teams: Team[]
-  items: ChecklistItem[]
-  onBack: () => void
+  teams: Team[];
+  items: ChecklistItem[];
+  onBack: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"teams" | "items">("teams")
-  const [selectedTeamId, setSelectedTeamId] = useState<string>(teams[0]?.id ?? "")
+  const [activeTab, setActiveTab] = useState<"teams" | "items">("teams");
+  const [selectedTeamId, setSelectedTeamId] = useState<string>(
+    teams[0]?.id ?? "",
+  );
 
   // New team form
-  const [newTeamName, setNewTeamName] = useState("")
-  const [newTeamDesc, setNewTeamDesc] = useState("")
-  const [newTeamLoc, setNewTeamLoc] = useState("")
+  const [newTeamName, setNewTeamName] = useState("");
+  const [newTeamDesc, setNewTeamDesc] = useState("");
+  const [newTeamLoc, setNewTeamLoc] = useState("");
 
   // Editing team
-  const [editingTeamId, setEditingTeamId] = useState<string | null>(null)
-  const [editTeamName, setEditTeamName] = useState("")
-  const [editTeamDesc, setEditTeamDesc] = useState("")
-  const [editTeamLoc, setEditTeamLoc] = useState("")
+  const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
+  const [editTeamName, setEditTeamName] = useState("");
+  const [editTeamDesc, setEditTeamDesc] = useState("");
+  const [editTeamLoc, setEditTeamLoc] = useState("");
 
   // New item form
-  const [newItemLabel, setNewItemLabel] = useState("")
+  const [newItemLabel, setNewItemLabel] = useState("");
 
   // Editing item
-  const [editingItemId, setEditingItemId] = useState<string | null>(null)
-  const [editItemLabel, setEditItemLabel] = useState("")
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editItemLabel, setEditItemLabel] = useState("");
 
   const handleAddTeam = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newTeamName.trim()) return
-    const t = addTeam(newTeamName.trim(), newTeamDesc.trim(), newTeamLoc.trim() || "Sem localização")
-    setNewTeamName("")
-    setNewTeamDesc("")
-    setNewTeamLoc("")
-    setSelectedTeamId((await t).id)
-    setActiveTab("items")
-  }
+    e.preventDefault();
+    if (!newTeamName.trim()) return;
+    const t = addTeam(
+      newTeamName.trim(),
+      newTeamDesc.trim(),
+      newTeamLoc.trim() || "Sem localização",
+    );
+    setNewTeamName("");
+    setNewTeamDesc("");
+    setNewTeamLoc("");
+    setSelectedTeamId((await t).id);
+    setActiveTab("items");
+  };
 
   const handleAddItem = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newItemLabel.trim() || !selectedTeamId) return
-    addItem(selectedTeamId, newItemLabel.trim())
-    setNewItemLabel("")
-  }
+    e.preventDefault();
+    if (!newItemLabel.trim() || !selectedTeamId) return;
+    addItem(selectedTeamId, newItemLabel.trim());
+    setNewItemLabel("");
+  };
 
-  const selectedTeam = teams.find((t) => t.id === selectedTeamId)
-  const teamItems = items.filter((i) => i.team_id === selectedTeamId)
+  const selectedTeam = teams.find((t) => t.id === selectedTeamId);
+  const teamItems = items.filter((i) => i.team_id === selectedTeamId);
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
@@ -1023,10 +1336,12 @@ function AdminPanel({
     outline: "none",
     color: "#0f172a",
     background: "#fff",
-  }
+  };
 
   return (
-    <main style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px 80px" }}>
+    <main
+      style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px 80px" }}
+    >
       <button
         onClick={onBack}
         style={{
@@ -1062,7 +1377,9 @@ function AdminPanel({
         >
           Painel Administrativo
         </h1>
-        <p style={{ color: "#64748b", fontSize: 15 }}>Gerencie equipes e checklists de atividades</p>
+        <p style={{ color: "#64748b", fontSize: 15 }}>
+          Gerencie equipes e checklists de atividades
+        </p>
       </div>
 
       {/* Tabs */}
@@ -1090,7 +1407,8 @@ function AdminPanel({
               fontSize: 14,
               fontWeight: activeTab === tab ? 600 : 500,
               cursor: "pointer",
-              boxShadow: activeTab === tab ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+              boxShadow:
+                activeTab === tab ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
               transition: "all 0.15s",
             }}
           >
@@ -1100,7 +1418,14 @@ function AdminPanel({
       </div>
 
       {activeTab === "teams" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 24, alignItems: "start" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1.4fr",
+            gap: 24,
+            alignItems: "start",
+          }}
+        >
           {/* Add team form */}
           <div
             style={{
@@ -1121,9 +1446,22 @@ function AdminPanel({
             >
               Nova Equipe
             </h2>
-            <form onSubmit={handleAddTeam} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <form
+              onSubmit={handleAddTeam}
+              style={{ display: "flex", flexDirection: "column", gap: 14 }}
+            >
               <div>
-                <label style={{ fontSize: 12, color: "#64748b", fontWeight: 600, display: "block", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                <label
+                  style={{
+                    fontSize: 12,
+                    color: "#64748b",
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: 5,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.4px",
+                  }}
+                >
                   Nome da Equipe *
                 </label>
                 <input
@@ -1131,13 +1469,27 @@ function AdminPanel({
                   onChange={(e) => setNewTeamName(e.target.value)}
                   placeholder="ex.: Equipe Delta"
                   style={inputStyle}
-                  onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                  onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.border = "1.5px solid #1e3a5f")
+                  }
+                  onBlur={(e) =>
+                    (e.currentTarget.style.border = "1.5px solid #e2e8f0")
+                  }
                   required
                 />
               </div>
               <div>
-                <label style={{ fontSize: 12, color: "#64748b", fontWeight: 600, display: "block", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                <label
+                  style={{
+                    fontSize: 12,
+                    color: "#64748b",
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: 5,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.4px",
+                  }}
+                >
                   Localização
                 </label>
                 <input
@@ -1145,12 +1497,26 @@ function AdminPanel({
                   onChange={(e) => setNewTeamLoc(e.target.value)}
                   placeholder="ex.: Setor Oeste"
                   style={inputStyle}
-                  onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                  onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.border = "1.5px solid #1e3a5f")
+                  }
+                  onBlur={(e) =>
+                    (e.currentTarget.style.border = "1.5px solid #e2e8f0")
+                  }
                 />
               </div>
               <div>
-                <label style={{ fontSize: 12, color: "#64748b", fontWeight: 600, display: "block", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                <label
+                  style={{
+                    fontSize: 12,
+                    color: "#64748b",
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: 5,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.4px",
+                  }}
+                >
                   Descrição
                 </label>
                 <input
@@ -1158,8 +1524,12 @@ function AdminPanel({
                   onChange={(e) => setNewTeamDesc(e.target.value)}
                   placeholder="ex.: Responsável pela área oeste"
                   style={inputStyle}
-                  onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                  onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.border = "1.5px solid #1e3a5f")
+                  }
+                  onBlur={(e) =>
+                    (e.currentTarget.style.border = "1.5px solid #e2e8f0")
+                  }
                 />
               </div>
               <button
@@ -1180,8 +1550,12 @@ function AdminPanel({
                   marginTop: 4,
                   transition: "background 0.15s",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#2a4f80")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "#1e3a5f")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#2a4f80")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "#1e3a5f")
+                }
               >
                 <IconPlus size={16} />
                 Criar Equipe
@@ -1198,19 +1572,35 @@ function AdminPanel({
               overflow: "hidden",
             }}
           >
-            <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid #f1f5f9" }}>
-              <h2 style={{ fontFamily: "Outfit, sans-serif", fontSize: 17, fontWeight: 700, color: "#0f172a" }}>
+            <div
+              style={{
+                padding: "20px 24px 16px",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: "Outfit, sans-serif",
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                }}
+              >
                 Equipes Cadastradas ({teams.length})
               </h2>
             </div>
             {teams.length === 0 ? (
-              <p style={{ padding: "32px 24px", color: "#94a3b8", fontSize: 14 }}>Nenhuma equipe cadastrada ainda.</p>
+              <p
+                style={{ padding: "32px 24px", color: "#94a3b8", fontSize: 14 }}
+              >
+                Nenhuma equipe cadastrada ainda.
+              </p>
             ) : (
               <div>
                 {teams.map((team) => {
-                  const tItems = items.filter((i) => i.team_id === team.id)
-                  const tDone = tItems.filter((i) => i.checked).length
-                  const isEditing = editingTeamId === team.id
+                  const tItems = items.filter((i) => i.team_id === team.id);
+                  const tDone = tItems.filter((i) => i.checked).length;
+                  const isEditing = editingTeamId === team.id;
                   return (
                     <div
                       key={team.id}
@@ -1221,14 +1611,26 @@ function AdminPanel({
                       }}
                     >
                       {isEditing ? (
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 8,
+                          }}
+                        >
                           <input
                             value={editTeamName}
                             onChange={(e) => setEditTeamName(e.target.value)}
                             placeholder="Nome da equipe"
                             style={{ ...inputStyle, fontSize: 13 }}
-                            onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                            onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                            onFocus={(e) =>
+                              (e.currentTarget.style.border =
+                                "1.5px solid #1e3a5f")
+                            }
+                            onBlur={(e) =>
+                              (e.currentTarget.style.border =
+                                "1.5px solid #e2e8f0")
+                            }
                             autoFocus
                           />
                           <input
@@ -1236,24 +1638,41 @@ function AdminPanel({
                             onChange={(e) => setEditTeamLoc(e.target.value)}
                             placeholder="Localização"
                             style={{ ...inputStyle, fontSize: 13 }}
-                            onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                            onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                            onFocus={(e) =>
+                              (e.currentTarget.style.border =
+                                "1.5px solid #1e3a5f")
+                            }
+                            onBlur={(e) =>
+                              (e.currentTarget.style.border =
+                                "1.5px solid #e2e8f0")
+                            }
                           />
                           <input
                             value={editTeamDesc}
                             onChange={(e) => setEditTeamDesc(e.target.value)}
                             placeholder="Descrição"
                             style={{ ...inputStyle, fontSize: 13 }}
-                            onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                            onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                            onFocus={(e) =>
+                              (e.currentTarget.style.border =
+                                "1.5px solid #1e3a5f")
+                            }
+                            onBlur={(e) =>
+                              (e.currentTarget.style.border =
+                                "1.5px solid #e2e8f0")
+                            }
                           />
                           <div style={{ display: "flex", gap: 8 }}>
                             <button
                               onClick={() => {
                                 if (editTeamName.trim()) {
-                                  editTeam(team.id, editTeamName.trim(), editTeamDesc.trim(), editTeamLoc.trim() || "Sem localização")
+                                  editTeam(
+                                    team.id,
+                                    editTeamName.trim(),
+                                    editTeamDesc.trim(),
+                                    editTeamLoc.trim() || "Sem localização",
+                                  );
                                 }
-                                setEditingTeamId(null)
+                                setEditingTeamId(null);
                               }}
                               style={{
                                 padding: "6px 14px",
@@ -1288,20 +1707,37 @@ function AdminPanel({
                           </div>
                         </div>
                       ) : (
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 12,
+                          }}
+                        >
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ fontWeight: 600, fontSize: 14, color: "#0f172a", marginBottom: 2 }}>{team.name}</p>
+                            <p
+                              style={{
+                                fontWeight: 600,
+                                fontSize: 14,
+                                color: "#0f172a",
+                                marginBottom: 2,
+                              }}
+                            >
+                              {team.name}
+                            </p>
                             <p style={{ fontSize: 12, color: "#64748b" }}>
-                              {team.location} · {tDone}/{tItems.length} atividades
+                              {team.location} · {tDone}/{tItems.length}{" "}
+                              atividades
                             </p>
                           </div>
                           <div style={{ display: "flex", gap: 6 }}>
                             <button
                               onClick={() => {
-                                setEditingTeamId(team.id)
-                                setEditTeamName(team.name)
-                                setEditTeamDesc(team.description)
-                                setEditTeamLoc(team.location)
+                                setEditingTeamId(team.id);
+                                setEditTeamName(team.name);
+                                setEditTeamDesc(team.description);
+                                setEditTeamLoc(team.location);
                               }}
                               style={{
                                 padding: "6px 8px",
@@ -1318,7 +1754,10 @@ function AdminPanel({
                               <IconPencil size={13} />
                             </button>
                             <button
-                              onClick={() => { setSelectedTeamId(team.id); setActiveTab("items") }}
+                              onClick={() => {
+                                setSelectedTeamId(team.id);
+                                setActiveTab("items");
+                              }}
                               style={{
                                 padding: "6px 12px",
                                 borderRadius: 7,
@@ -1352,7 +1791,7 @@ function AdminPanel({
                         </div>
                       )}
                     </div>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -1361,7 +1800,14 @@ function AdminPanel({
       )}
 
       {activeTab === "items" && (
-        <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 24, alignItems: "start" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "280px 1fr",
+            gap: 24,
+            alignItems: "start",
+          }}
+        >
           {/* Team selector */}
           <div
             style={{
@@ -1371,13 +1817,27 @@ function AdminPanel({
               overflow: "hidden",
             }}
           >
-            <div style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
-              <p style={{ fontFamily: "Outfit, sans-serif", fontWeight: 700, fontSize: 14, color: "#0f172a" }}>
+            <div
+              style={{
+                padding: "16px 20px",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "Outfit, sans-serif",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  color: "#0f172a",
+                }}
+              >
                 Selecionar Equipe
               </p>
             </div>
             {teams.length === 0 ? (
-              <p style={{ padding: "20px", fontSize: 13, color: "#94a3b8" }}>Crie uma equipe primeiro.</p>
+              <p style={{ padding: "20px", fontSize: 13, color: "#94a3b8" }}>
+                Crie uma equipe primeiro.
+              </p>
             ) : (
               teams.map((team) => (
                 <button
@@ -1387,8 +1847,12 @@ function AdminPanel({
                     width: "100%",
                     padding: "13px 20px",
                     border: "none",
-                    background: selectedTeamId === team.id ? "#eff6ff" : "transparent",
-                    borderLeft: selectedTeamId === team.id ? "3px solid #1e3a5f" : "3px solid transparent",
+                    background:
+                      selectedTeamId === team.id ? "#eff6ff" : "transparent",
+                    borderLeft:
+                      selectedTeamId === team.id
+                        ? "3px solid #1e3a5f"
+                        : "3px solid transparent",
                     color: selectedTeamId === team.id ? "#1e3a5f" : "#475569",
                     fontSize: 14,
                     fontWeight: selectedTeamId === team.id ? 600 : 400,
@@ -1412,13 +1876,29 @@ function AdminPanel({
               overflow: "hidden",
             }}
           >
-            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
-              <h2 style={{ fontFamily: "Outfit, sans-serif", fontSize: 17, fontWeight: 700, color: "#0f172a", marginBottom: 2 }}>
-                {selectedTeam ? `Checklist — ${selectedTeam.name}` : "Selecione uma equipe"}
+            <div
+              style={{
+                padding: "20px 24px",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: "Outfit, sans-serif",
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                  marginBottom: 2,
+                }}
+              >
+                {selectedTeam
+                  ? `Checklist — ${selectedTeam.name}`
+                  : "Selecione uma equipe"}
               </h2>
               {selectedTeam && (
                 <p style={{ fontSize: 13, color: "#64748b" }}>
-                  {teamItems.filter((i) => i.checked).length}/{teamItems.length} concluídas
+                  {teamItems.filter((i) => i.checked).length}/{teamItems.length}{" "}
+                  concluídas
                 </p>
               )}
             </div>
@@ -1426,15 +1906,28 @@ function AdminPanel({
             {selectedTeam && (
               <>
                 {/* Add item form */}
-                <div style={{ padding: "16px 24px", borderBottom: "1px solid #f1f5f9", background: "#fafafa" }}>
-                  <form onSubmit={handleAddItem} style={{ display: "flex", gap: 10 }}>
+                <div
+                  style={{
+                    padding: "16px 24px",
+                    borderBottom: "1px solid #f1f5f9",
+                    background: "#fafafa",
+                  }}
+                >
+                  <form
+                    onSubmit={handleAddItem}
+                    style={{ display: "flex", gap: 10 }}
+                  >
                     <input
                       value={newItemLabel}
                       onChange={(e) => setNewItemLabel(e.target.value)}
                       placeholder="Nova atividade para esta equipe..."
                       style={{ ...inputStyle, flex: 1 }}
-                      onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                      onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                      onFocus={(e) =>
+                        (e.currentTarget.style.border = "1.5px solid #1e3a5f")
+                      }
+                      onBlur={(e) =>
+                        (e.currentTarget.style.border = "1.5px solid #e2e8f0")
+                      }
                     />
                     <button
                       type="submit"
@@ -1453,8 +1946,12 @@ function AdminPanel({
                         whiteSpace: "nowrap",
                         transition: "background 0.15s",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#2a4f80")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "#1e3a5f")}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = "#2a4f80")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "#1e3a5f")
+                      }
                     >
                       <IconPlus size={15} />
                       Adicionar
@@ -1465,85 +1962,188 @@ function AdminPanel({
                 {/* Items list */}
                 <div>
                   {teamItems.length === 0 ? (
-                    <p style={{ padding: "32px 24px", color: "#94a3b8", fontSize: 14 }}>
+                    <p
+                      style={{
+                        padding: "32px 24px",
+                        color: "#94a3b8",
+                        fontSize: 14,
+                      }}
+                    >
                       Nenhuma atividade cadastrada. Adicione a primeira acima.
                     </p>
                   ) : (
                     teamItems.map((item) => {
-                      const isEditingThis = editingItemId === item.id
+                      const isEditingThis = editingItemId === item.id;
                       return (
                         <div
                           key={item.id}
                           style={{
                             padding: "10px 24px",
                             borderBottom: "1px solid #f8fafc",
-                            background: isEditingThis ? "#f8fafc" : "transparent",
+                            background: isEditingThis
+                              ? "#f8fafc"
+                              : "transparent",
                           }}
                         >
                           {isEditingThis ? (
-                            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: 8,
+                                alignItems: "center",
+                              }}
+                            >
                               <input
                                 value={editItemLabel}
-                                onChange={(e) => setEditItemLabel(e.target.value)}
+                                onChange={(e) =>
+                                  setEditItemLabel(e.target.value)
+                                }
                                 style={{ ...inputStyle, flex: 1, fontSize: 13 }}
-                                onFocus={(e) => (e.currentTarget.style.border = "1.5px solid #1e3a5f")}
-                                onBlur={(e) => (e.currentTarget.style.border = "1.5px solid #e2e8f0")}
+                                onFocus={(e) =>
+                                  (e.currentTarget.style.border =
+                                    "1.5px solid #1e3a5f")
+                                }
+                                onBlur={(e) =>
+                                  (e.currentTarget.style.border =
+                                    "1.5px solid #e2e8f0")
+                                }
                                 autoFocus
                                 onKeyDown={(e) => {
                                   if (e.key === "Enter") {
-                                    if (editItemLabel.trim()) editItem(item.id, editItemLabel.trim())
-                                    setEditingItemId(null)
+                                    if (editItemLabel.trim())
+                                      editItem(item.id, editItemLabel.trim());
+                                    setEditingItemId(null);
                                   }
-                                  if (e.key === "Escape") setEditingItemId(null)
+                                  if (e.key === "Escape")
+                                    setEditingItemId(null);
                                 }}
                               />
                               <button
                                 onClick={() => {
-                                  if (editItemLabel.trim()) editItem(item.id, editItemLabel.trim())
-                                  setEditingItemId(null)
+                                  if (editItemLabel.trim())
+                                    editItem(item.id, editItemLabel.trim());
+                                  setEditingItemId(null);
                                 }}
-                                style={{ padding: "7px 12px", borderRadius: 7, border: "none", background: "#1e3a5f", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+                                style={{
+                                  padding: "7px 12px",
+                                  borderRadius: 7,
+                                  border: "none",
+                                  background: "#1e3a5f",
+                                  color: "#fff",
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 4,
+                                }}
                               >
                                 <IconSave size={13} /> Salvar
                               </button>
                               <button
                                 onClick={() => setEditingItemId(null)}
-                                style={{ padding: "7px 10px", borderRadius: 7, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: 12, cursor: "pointer" }}
+                                style={{
+                                  padding: "7px 10px",
+                                  borderRadius: 7,
+                                  border: "1px solid #e2e8f0",
+                                  background: "#fff",
+                                  color: "#64748b",
+                                  fontSize: 12,
+                                  cursor: "pointer",
+                                }}
                               >
                                 Cancelar
                               </button>
                             </div>
                           ) : (
-                            <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => toggleItem(item.id)}>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 12,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => toggleItem(item.id)}
+                            >
                               <div
                                 style={{
-                                  width: 22, height: 22, borderRadius: 6,
-                                  border: item.checked ? "none" : "2px solid #cbd5e1",
+                                  width: 22,
+                                  height: 22,
+                                  borderRadius: 6,
+                                  border: item.checked
+                                    ? "none"
+                                    : "2px solid #cbd5e1",
                                   background: item.checked ? "#16a34a" : "#fff",
-                                  display: "flex", alignItems: "center", justifyContent: "center",
-                                  flexShrink: 0, color: "#fff", transition: "all 0.2s",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  flexShrink: 0,
+                                  color: "#fff",
+                                  transition: "all 0.2s",
                                 }}
                               >
                                 {item.checked && <IconCheck size={13} />}
                               </div>
                               <div style={{ flex: 1 }}>
-                                <p style={{ fontSize: 14, color: item.checked ? "#94a3b8" : "#1e293b", fontWeight: item.checked ? 400 : 500, textDecoration: item.checked ? "line-through" : "none" }}>
+                                <p
+                                  style={{
+                                    fontSize: 14,
+                                    color: item.checked ? "#94a3b8" : "#1e293b",
+                                    fontWeight: item.checked ? 400 : 500,
+                                    textDecoration: item.checked
+                                      ? "line-through"
+                                      : "none",
+                                  }}
+                                >
                                   {item.label}
                                 </p>
                                 {item.checked && item.checked_at && (
-                                  <p style={{ fontSize: 11, color: "#16a34a", marginTop: 2 }}>{item.checked_at}</p>
+                                  <p
+                                    style={{
+                                      fontSize: 11,
+                                      color: "#16a34a",
+                                      marginTop: 2,
+                                    }}
+                                  >
+                                    {item.checked_at}
+                                  </p>
                                 )}
                               </div>
                               <button
-                                onClick={(e) => { e.stopPropagation(); setEditingItemId(item.id); setEditItemLabel(item.label) }}
-                                style={{ padding: "5px 7px", borderRadius: 6, border: "1px solid #e2e8f0", background: "#f8fafc", color: "#1e3a5f", cursor: "pointer", display: "flex", alignItems: "center" }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingItemId(item.id);
+                                  setEditItemLabel(item.label);
+                                }}
+                                style={{
+                                  padding: "5px 7px",
+                                  borderRadius: 6,
+                                  border: "1px solid #e2e8f0",
+                                  background: "#f8fafc",
+                                  color: "#1e3a5f",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
                                 title="Editar atividade"
                               >
                                 <IconPencil size={13} />
                               </button>
                               <button
-                                onClick={(e) => { e.stopPropagation(); removeItem(item.id) }}
-                                style={{ padding: "5px 7px", borderRadius: 6, border: "1px solid #fecaca", background: "#fff", color: "#dc2626", cursor: "pointer", display: "flex", alignItems: "center" }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeItem(item.id);
+                                }}
+                                style={{
+                                  padding: "5px 7px",
+                                  borderRadius: 6,
+                                  border: "1px solid #fecaca",
+                                  background: "#fff",
+                                  color: "#dc2626",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
                                 title="Remover atividade"
                               >
                                 <IconTrash size={13} />
@@ -1551,7 +2151,7 @@ function AdminPanel({
                             </div>
                           )}
                         </div>
-                      )
+                      );
                     })
                   )}
                 </div>
@@ -1561,29 +2161,32 @@ function AdminPanel({
         </div>
       )}
     </main>
-  )
+  );
 }
 
 // ── Root App ──────────────────────────────────────────────────────────────────
-type View = { page: "home" } | { page: "team"; teamId: string } | { page: "admin" }
+type View =
+  | { page: "home" }
+  | { page: "team"; teamId: string }
+  | { page: "admin" };
 
 export default function App() {
-  const { teams, items } = useAppState()
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [view, setView] = useState<View>({ page: "home" })
+  const { teams, items } = useAppState();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [view, setView] = useState<View>({ page: "home" });
 
   const handleLogin = useCallback((u: string, p: string) => {
     if (u === ADMIN_USER.username && p === ADMIN_USER.password) {
-      setIsAdmin(true)
-      return true
+      setIsAdmin(true);
+      return true;
     }
-    return false
-  }, [])
+    return false;
+  }, []);
 
   const handleLogout = useCallback(() => {
-    setIsAdmin(false)
-    setView({ page: "home" })
-  }, [])
+    setIsAdmin(false);
+    setView({ page: "home" });
+  }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "#f1f5f9" }}>
@@ -1604,18 +2207,26 @@ export default function App() {
         />
       )}
 
-      {view.page === "team" && (() => {
-        const team = teams.find((t) => t.id === view.teamId)
-        if (!team) return <div style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}>Equipe não encontrada.</div>
-        return (
-          <TeamDetailPage
-            team={team}
-            items={items}
-            isAdmin={isAdmin}
-            onBack={() => setView({ page: "home" })}
-          />
-        )
-      })()}
+      {view.page === "team" &&
+        (() => {
+          const team = teams.find((t) => t.id === view.teamId);
+          if (!team)
+            return (
+              <div
+                style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}
+              >
+                Equipe não encontrada.
+              </div>
+            );
+          return (
+            <TeamDetailPage
+              team={team}
+              items={items}
+              isAdmin={isAdmin}
+              onBack={() => setView({ page: "home" })}
+            />
+          );
+        })()}
 
       {view.page === "admin" && isAdmin && (
         <AdminPanel
@@ -1626,7 +2237,13 @@ export default function App() {
       )}
 
       {view.page === "admin" && !isAdmin && (
-        <div style={{ padding: "80px 24px", textAlign: "center", color: "#94a3b8" }}>
+        <div
+          style={{
+            padding: "80px 24px",
+            textAlign: "center",
+            color: "#94a3b8",
+          }}
+        >
           Acesso negado. Faça login como administrador.
         </div>
       )}
@@ -1645,5 +2262,5 @@ export default function App() {
         Activity map © 2026 — Sistema de Acompanhamento de Atividades
       </footer>
     </div>
-  )
+  );
 }
